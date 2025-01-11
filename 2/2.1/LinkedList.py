@@ -1,7 +1,6 @@
-from collections import deque
+from datetime import datetime
 import random
 from string import ascii_letters, digits
-from time import monotonic
 
 
 class ObjList:
@@ -77,10 +76,10 @@ class LinkedList:
         prev_node = node.get_prev()
         if prev_node:
             prev_node.set_next(obj)
+            obj.set_prev(prev_node)
         else:
             self.head = obj
 
-        obj.set_prev(prev_node)
         obj.set_next(node)
         node.set_prev(obj)
 
@@ -105,112 +104,82 @@ symbols = ascii_letters + digits
 
 
 print(f"\n1. Создание списка из {L_VALUE} элементов, по {K_VALUE} случайных символов в каждом:")
-DATA = [ObjList(''.join(random.choices(symbols, k=K_VALUE))) for _ in range(L_VALUE)]
+DATA = [''.join(random.choices(symbols, k=K_VALUE)) for _ in range(L_VALUE)]
 
-
+start = datetime.now()
 lst1 = LinkedList()
-
-start = monotonic()
 for data in DATA:
-    lst1.add_obj(data)
-finish = monotonic()
+    lst1.add_obj(ObjList(data))
+finish = datetime.now()
+print(f"    - с двусвязным списком: {(finish - start).total_seconds() * 1000:.2f} мс.")
 
-print(f"    - с двусвязным списком: {(finish - start) * 1000:.2f} мс.")
-
-
+start = datetime.now()
 lst2 = []
-
-start = monotonic()
 for data in DATA:
     lst2.append(data)
-finish = monotonic()
+finish = datetime.now()
+print(f"    - со стандартным списком: {(finish - start).total_seconds() * 1000:.2f} мс.")
 
-print(f"    - со стандартным списком: {(finish - start) * 1000:.2f} мс.")
 
-lst3 = deque()
-start = monotonic()
-for data in DATA:
-    lst3.append(data)
-finish = monotonic()
-
-print(f"    - со списком класса deque: {(finish - start) * 1000:.2f} мс.")
 
 
 print(f"\n2. Удаление {L_VALUE // 2} последних элементов из списка:")
 
-start = monotonic()
+start = datetime.now()
 for _ in range(L_VALUE // 2):
     lst1.remove_obj()
-finish = monotonic()
+finish = datetime.now()
+print(f"    - с двусвязным списком: {(finish - start).total_seconds() * 1000:.2f} мс.")
 
-print(f"    - с двусвязным списком: {(finish - start) * 1000:.2f} мс.")
-
-start = monotonic()
+start = datetime.now()
 for _ in range(L_VALUE // 2):
     lst2.pop()
-finish = monotonic()
-
-print(f"    - со стандартным списком: {(finish - start) * 1000:.2f} мс.")
-
-start = monotonic()
-for _ in range(L_VALUE // 2):
-    lst3.pop()
-finish = monotonic()
-
-print(f"    - со списком класса deque: {(finish - start) * 1000:.2f} мс.")
-
-
-
-inserted_elements_count = L_VALUE // 2
-print(f"\n3. Вставка {inserted_elements_count} элементов на случайные позиции")
-
-DATA = [ObjList(''.join(random.choices(symbols, k=K_VALUE))) for _ in range(inserted_elements_count)]
-POSITION = [random.randint(0, i) for i in range(inserted_elements_count + 1)]
-
-start = monotonic()
-for data, pos in zip(DATA, POSITION):
-    lst1.insert_obj(data, pos)
-finish = monotonic()
-
-print(f"    - с двусвязным списком: {(finish - start) * 1000:.2f} мс.")
-
-start = monotonic()
-for data, pos in zip(DATA, POSITION):
-    lst2.insert(pos, data)
-finish = monotonic()
-
-print(f"    - со стандартным списком: {(finish - start) * 1000:.2f} мс.")
-
-start = monotonic()
-for data, pos in zip(DATA, POSITION):
-    lst3.insert(pos, data)
-finish = monotonic()
-
-print(f"    - со списком класса deque: {(finish - start) * 1000:.2f} мс.")
+finish = datetime.now()
+print(f"    - со стандартным списком: {(finish - start).total_seconds() * 1000:.2f} мс.")
 
 
 
 
-print(f"\n4. Вставка {L_VALUE} элементов в начало списка")
-DATA = [ObjList(''.join(random.choices(symbols, k=K_VALUE))) for _ in range(L_VALUE)]
+print(f"\n3. Вставка {L_VALUE // 2} элементов на случайные позиции")
 
-start = monotonic()
-for data in DATA:
-    lst1.insert_obj(data, 0)
-finish = monotonic()
+start = datetime.now()
+for data in DATA[:L_VALUE // 2]:
+    lst1.insert_obj(ObjList(data), random.randint(0, lst1.size))
+finish = datetime.now()
+print(f"    - с двусвязным списком: {(finish - start).total_seconds() * 1000:.2f} мс.")
 
-print(f"    - с двусвязным списком: {(finish - start) * 1000:.2f} мс.")
+start = datetime.now()
+for data in DATA[:L_VALUE // 2]:
+    lst2.insert(random.randint(0, len(lst2)), ObjList(data))
+finish = datetime.now()
+print(f"    - со стандартным списком: {(finish - start).total_seconds() * 1000:.2f} мс.")
 
-start = monotonic()
-for data in DATA:
-    lst2.insert(0, data)
-finish = monotonic()
-
-print(f"    - со стандартным списком: {(finish - start) * 1000:.2f} мс.")
-
-start = monotonic()
-for data in DATA:
-    lst3.insert(0, data)
-finish = monotonic()
-
-print(f"    - со списком класса deque: {(finish - start) * 1000:.2f} мс.")
+#
+# lst = LinkedList()
+# lst.add_obj(ObjList("данные 1"))
+# lst.add_obj(ObjList("данные 2"))
+# lst.add_obj(ObjList("данные 3"))
+# res = lst.get_data()    # ['данные 1', 'данные 2', 'данные 3']
+# print(res)
+#
+# lst.remove_obj()
+# res = lst.get_data()    # ['данные 1', 'данные 2']
+# print(res)
+#
+# lst.add_obj(ObjList("данные 3"))
+# lst.add_obj(ObjList("данные 4"))
+# lst.add_obj(ObjList("данные 5"))
+# res = lst.get_data()    # ['данные 1', 'данные 2', 'данные 3', 'данные 4', 'данные 5']
+# print(res)
+#
+# lst.remove_obj()
+# lst.remove_obj()
+# lst.remove_obj()
+# lst.remove_obj()
+# # lst.remove_obj()
+# res = lst.get_data()    # []
+# print(res)
+#
+# lst.remove_obj()
+# res = lst.get_data()    # []
+# print(res)
